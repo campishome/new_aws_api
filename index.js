@@ -1,11 +1,17 @@
 const express = require('express');
 const mysql = require('mysql');
-const cors = require('cors');  // นำเข้า cors
+const cors = require('cors');
 const app = express();
 const PORT = 4000;
 
 // ใช้งาน cors middleware
-app.use(cors());
+const corsOptions = {
+  origin: 'https://new-aws-api.vercel.app', // อนุญาตการเข้าถึงจากโดเมน Vercel
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: 'Content-Type,Authorization'
+};
+
+app.use(cors(corsOptions));
 
 // ฟังก์ชันสำหรับสร้างการเชื่อมต่อฐานข้อมูลใหม่
 const createDbConnection = () => {
@@ -30,14 +36,14 @@ const createDbConnection = () => {
     console.error('Database error:', err);
     if (err.code === 'PROTOCOL_CONNECTION_LOST') {
       // การเชื่อมต่อถูกตัดการเชื่อมต่อให้ลองเชื่อมต่อใหม่
-      createDbConnection();
+      db = createDbConnection();  // รีเซ็ตการเชื่อมต่อ
     }
   });
 
   return db;
 };
 
-const db = createDbConnection();
+let db = createDbConnection();
 
 app.listen(PORT, () => {
   console.log(`API Listening on PORT ${PORT}`);
@@ -52,11 +58,11 @@ app.get('/test', (req, res) => {
 });
 
 app.get('/connect', (req, res) => {
-  const query = 'SELECT * FROM LottoResult';  
+  const query = 'SELECT * FROM LottoResult';
   db.query(query, (error, results) => {
     if (error) {
       console.error('Error executing query:', error);
-      res.status(500).send('Error fetching data.'+error);
+      res.status(500).send('Error fetching data.');
     } else {
       res.status(200).json(results);
     }
