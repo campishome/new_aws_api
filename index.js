@@ -56,7 +56,7 @@ app.get('/connect', (req, res) => {
   db.query(query, (error, results) => {
     if (error) {
       console.error('Error executing query:', error);
-      res.status(500).send('Error fetching data.');
+      res.status(500).send('Error fetching data.'+error);
     } else {
       res.status(200).json(results);
     }
