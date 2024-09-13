@@ -1,7 +1,11 @@
 const express = require('express');
 const mysql = require('mysql');
+const cors = require('cors');  // นำเข้า cors
 const app = express();
 const PORT = 4000;
+
+// ใช้งาน cors middleware
+app.use(cors());
 
 // ฟังก์ชันสำหรับสร้างการเชื่อมต่อฐานข้อมูลใหม่
 const createDbConnection = () => {
